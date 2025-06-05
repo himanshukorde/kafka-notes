@@ -79,9 +79,24 @@ The next poll will start from offset 2 or 3, depending on configuration.
 Kafka stores offsets in an internal topic called: __consumer_offsets.
 Alternatively, consumers can manually manage offsets (e.g., in a DB).
 
+📁 What is a Kafka Segment?
+Kafka stores messages in partition logs. Each partition is broken into multiple segment files to manage large data efficiently.
+A Kafka Topic → split into Partitions → each partition → split into Segments (log files)
+Each .log file = segment
+
+🛤️ Flow of a Kafka Message (Behind the Scenes)
+When the producer sends a message to Kafka, here's what happens:
+Message → Topic + Partition:
+Kafka uses the topic and (optionally) a key to determine the target partition.
+Data → Broker → Partition → Segment File:
+The message is sent to the Kafka broker responsible for that partition.
+The broker appends the message to the end of a log segment file on disk.
+These are stored in Kafka’s configured log.dirs location (default: /tmp/kafka-logs on Linux, or set via server.properties).
+
+Actual Storage Location :-  .log → Actual message data
 
 
-
+**************************************************************************************************************************************************************************************************************
 Steps to setup kafka in windows:
 
 Step-1 : Download Zookeeper:
