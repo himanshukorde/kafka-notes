@@ -28,6 +28,7 @@ Step	Producer	Kafka Topic	Consumer	Purpose
 Customer places order	Customer App	order_topic	Udupi Hotel App	Order received at restaurant
 Udupi Hotel accepts order	Udupi Hotel App	order_status_topic	Customer App	Order confirmation notification
 
+
 🔹 When to Store in Database?
 ✔️ YES – When the customer places an order → Store in DB (orders table).
 ✔️ YES – When the order is completed → Update order status in DB.
@@ -42,9 +43,46 @@ Kafka Architecture:
 4. Publisher - This will push messages to kafkatopic
 5. Subscriber - This will fetch the message that is pushed to kafka by publisher
 
+Kafka Partationing:
+
+A Kafka topic is split into partitions, which are individual logs where records are stored sequentially and immutably.
+Partitioning = Horizontal scaling of a topic.
+
+When producer produce message it goes in kafka topic inside partations in round robin fashion.
+There can be multiple partations in a kafka topic.
+
+Kafka ensures message order only within a partition, not the whole topic.
+Choose the key wisely if order is important.
+
+If we want to order messages then it should go in same partation. but because of message goes in round robin fashion in multiple partations,
+we sends key with message. i.e same key message will go in same partations. kafka ensures message order only within a partition. so we get message in order.
+
+Consumer Offeset :
+-------------------
+When a consumer group reads message from a tpoic, each member of the group maintains its own offset and update it, as it consume message.
+
+So what is consumer offset ?
+A consumer offset is a pointer that tells how much data a consumer has read from a Kafka partition.
+Think of it like a bookmark in a log file.
+
+🔧 How it Works:
+Each Kafka partition is an ordered log of messages with a unique offset (starting from 0).
+
+Example (Partition 0):
+Offset:     0     1     2     3
+Message:  msg1  msg2  msg3  msg4
+
+If a consumer has read up to msg2, the offset is 2.
+The next poll will start from offset 2 or 3, depending on configuration.
+
+💾 Where Offsets are Stored?
+Kafka stores offsets in an internal topic called: __consumer_offsets.
+Alternatively, consumers can manually manage offsets (e.g., in a DB).
+
+
+
 
 Steps to setup kafka in windows:
-
 
 Step-1 : Download Zookeeper:
 
